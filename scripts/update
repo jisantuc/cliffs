@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+# description: Runs migrations, installs dependencies, etc.
