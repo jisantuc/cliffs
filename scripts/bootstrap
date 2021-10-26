@@ -1,3 +1,18 @@
 #!/usr/bin/env bash
 
 # description: Pulls/builds necessary containers
+
+function usage() {
+    echo -n \
+        "Usage: $(basename "$0")
+Like Elvis Costello, start it up, in the narrow sense of pulling containers
+"
+}
+
+if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+    if [ "${1:-}" = "--help" ]; then
+        usage
+    else
+        exit 1
+    fi
+fi

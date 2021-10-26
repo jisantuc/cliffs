@@ -3,6 +3,7 @@ with import <nixpkgs> { };
 pkgs.haskellPackages.ghcWithPackages (ps: with ps; [
   # actual project dependencies
   brick
+  command
   directory
   filepath
   microlens

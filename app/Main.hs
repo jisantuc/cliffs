@@ -13,8 +13,8 @@ import Control.Monad (void)
 import Data.Text (pack)
 import qualified Graphics.Vty as V
 import Lib
-  ( Script (Script),
-    Scripts (Scripts),
+  ( AppState (..),
+    Script (Script),
     appEvent,
     drawUi,
     emphAttr,
@@ -22,12 +22,14 @@ import Lib
 import System.Directory (listDirectory)
 import System.FilePath (takeFileName)
 
-app :: M.App Scripts e ()
+app :: M.App AppState (IO ()) ()
 app =
   M.App
     { M.appDraw = drawUi,
       M.appStartEvent = return,
       M.appHandleEvent = appEvent,
+      -- A function from an app state to a map from attributes (string classses basically)
+      -- to modifications to rendering
       M.appAttrMap = const $ attrMap V.defAttr [(emphAttr, V.white `on` V.blue)],
       M.appChooseCursor = M.neverShowCursor
     }
@@ -36,7 +38,7 @@ main :: IO ()
 main = do
   scriptFileNames <- listDirectory "./scripts"
   let scripts =
-        Scripts
+        AppState
           ((\n -> Script False (pack $ takeFileName n) "description goes here") <$> scriptFileNames)
           Nothing
    in void $ M.defaultMain app scripts

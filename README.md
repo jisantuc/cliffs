@@ -23,3 +23,6 @@ You can see an example by running `cliffs` in this directory. Running the execut
 ```
 
 You can press the up / down arrow to select different scripts.
+
+[`brick`]: https://github.com/jtdaugherty/brick
+[scripts to rule them all]: https://github.com/github/scripts-to-rule-them-all

@@ -33,6 +33,7 @@ library
   build-depends:
       base >=4.7 && <5
     , brick
+    , command
     , directory
     , filepath
     , microlens
@@ -52,6 +53,7 @@ executable cliffs-exe
       base >=4.7 && <5
     , brick
     , cliffs
+    , command
     , directory
     , filepath
     , microlens
@@ -72,6 +74,7 @@ test-suite cliffs-test
       base >=4.7 && <5
     , brick
     , cliffs
+    , command
     , directory
     , filepath
     , microlens
