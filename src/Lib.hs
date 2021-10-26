@@ -3,20 +3,41 @@
 
 module Lib where
 
-import Brick (AttrName, BrickEvent (VtyEvent), Widget, padLeftRight, str, txt, withAttr, withBorderStyle)
+import Brick (AttrName, BrickEvent (VtyEvent), Widget, hLimit, padLeftRight, str, strWrap, txt, vBox, withAttr, withBorderStyle)
 import qualified Brick.Main as M
 import qualified Brick.Types as T
 import Brick.Widgets.Border (borderWithLabel)
 import qualified Brick.Widgets.Border.Style
 import qualified Brick.Widgets.Center as C
 import Brick.Widgets.Table (Table, renderTable, rowBorders, surroundingBorder, table)
+import Control.Monad.IO.Class (liftIO)
 import Data.List.NonEmpty (NonEmpty ((:|)), toList)
-import Data.Text (Text)
+import Data.Maybe (fromMaybe)
+import Data.Text (Text, unpack)
 import qualified Graphics.Vty as V
+import System.Command (Stdout (Stdout), command)
 
-data Script = Script {selected :: Bool, name :: Text, description :: Text} deriving (Eq, Show)
+data Script = Script
+  { selected :: Bool,
+    name :: Text,
+    description :: Text
+  }
+  deriving (Eq, Show)
 
-data Scripts = Scripts {availableScripts :: [Script], currentScript :: Maybe Script} deriving (Eq, Show)
+data ScriptWithOutput = ScriptWithOutput
+  { script :: Script,
+    output :: Maybe String
+  }
+  deriving (Eq, Show)
+
+data AppState = AppState
+  { availableAppState :: [Script],
+    currentScript :: Maybe ScriptWithOutput
+  }
+  deriving (Eq, Show)
+
+scriptWithoutOutput :: Script -> ScriptWithOutput
+scriptWithoutOutput s = ScriptWithOutput s Nothing
 
 selectNext' :: NonEmpty Script -> (Script, NonEmpty Script)
 selectNext' (h :| []) =
@@ -31,21 +52,21 @@ selectNext' (h :| t : ts) =
       let (selectedScript, scripts) = selectNext' (t :| ts)
        in (selectedScript, h :| toList scripts)
 
-selectNext :: Scripts -> Scripts
-selectNext (Scripts [] _) = Scripts [] Nothing
-selectNext (Scripts xs@(h : t) _) =
+selectNext :: AppState -> AppState
+selectNext (AppState [] _) = AppState [] Nothing
+selectNext (AppState xs@(h : t) _) =
   if not $ any selected xs
     then
       let selectedScript = h {selected = True}
-       in Scripts (selectedScript : t) (Just selectedScript)
+       in AppState (selectedScript : t) (Just . scriptWithoutOutput $ selectedScript)
     else
       let (selectedScript, scripts) = selectNext' (h :| t)
-       in Scripts (toList scripts) (Just selectedScript)
+       in AppState (toList scripts) (Just . scriptWithoutOutput $ selectedScript)
 
-selectPrevious :: Scripts -> Scripts
-selectPrevious (Scripts xs s) =
-  let Scripts newElems selected = selectNext (Scripts (reverse xs) s)
-   in Scripts (reverse newElems) selected
+selectPrevious :: AppState -> AppState
+selectPrevious (AppState xs s) =
+  let AppState newElems selected = selectNext (AppState (reverse xs) s)
+   in AppState (reverse newElems) selected
 
 listDrawName :: Bool -> Text -> Widget a
 listDrawName selected name =
@@ -65,27 +86,48 @@ mkRow (Script {selected, name, description}) =
     listDrawDescription description
   ]
 
-drawTable :: Scripts -> Table a
-drawTable (Scripts {availableScripts}) =
-  table $ mkRow <$> availableScripts
+drawTable :: AppState -> Table a
+drawTable (AppState {availableAppState}) =
+  table $ mkRow <$> availableAppState
 
-drawUi :: Scripts -> [Widget ()]
-drawUi scripts =
+drawUi :: AppState -> [Widget ()]
+drawUi appState =
   let t =
         surroundingBorder False $
           rowBorders False $
-            drawTable scripts
+            drawTable appState
       attrs =
         C.hCenter $ borderWithLabel (str "Scripts") . renderTable $ t
+      helpBox =
+        let helpText = fromMaybe "No help text yet" (currentScript appState >>= output)
+         in C.hCenter . hLimit 90 . borderWithLabel (str "Help output") . strWrap $ helpText
       ui =
-        C.vCenter $
-          withBorderStyle Brick.Widgets.Border.Style.unicodeBold attrs
+        vBox
+          [ C.vCenter $
+              withBorderStyle Brick.Widgets.Border.Style.unicodeBold attrs,
+            C.vCenter helpBox
+          ]
    in [ui]
 
-appEvent :: Scripts -> BrickEvent () e -> T.EventM () (T.Next Scripts)
+getHelp :: Script -> IO Stdout
+getHelp Script {name} = command [] ("./scripts/" ++ unpack name) ["--help"]
+
+addHelpOutput :: (AppState -> AppState) -> AppState -> T.EventM e (T.Next AppState)
+addHelpOutput successorFunc state =
+  let nextScript = successorFunc state
+      nextSelected = currentScript nextScript
+   in ( liftIO $ do
+          helpOut <- traverse getHelp (script <$> nextSelected)
+          case helpOut of
+            Nothing -> pure nextScript
+            Just (Stdout helpText) -> pure nextScript {currentScript = (\x -> x {output = Just helpText}) <$> nextSelected}
+      )
+        >>= M.continue
+
+appEvent :: AppState -> BrickEvent () (IO ()) -> T.EventM () (T.Next AppState)
 appEvent i (VtyEvent (V.EvKey V.KEsc [])) = M.halt i
-appEvent i (VtyEvent (V.EvKey V.KDown [])) = M.continue (selectNext i)
-appEvent i (VtyEvent (V.EvKey V.KUp [])) = M.continue (selectPrevious i)
+appEvent i (VtyEvent (V.EvKey V.KDown [])) = addHelpOutput selectNext i
+appEvent i (VtyEvent (V.EvKey V.KUp [])) = addHelpOutput selectPrevious i
 appEvent i (VtyEvent (V.EvKey V.KEnter [])) = M.continue i
 appEvent i _ = M.continue i
 
