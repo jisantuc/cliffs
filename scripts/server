@@ -1,3 +1,21 @@
 #!/usr/bin/env bash
 
 # description: Starts a development server
+
+function usage() {
+    echo -n \
+        "Usage: $(basename "$0")
+Start up a server, running on port 8080, with all of those dependencies
+for sure, dependencies all day.
+
+Man, lots of dependencies, and all these lines describing them.
+"
+}
+
+if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+    if [ "${1:-}" = "--help" ]; then
+        usage
+    else
+        exit 1
+    fi
+fi

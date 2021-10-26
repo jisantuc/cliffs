@@ -1,3 +1,17 @@
 #!/usr/bin/env bash
 
 # description: Runs migrations, installs dependencies, etc.
+function usage() {
+    echo -n \
+        "Usage: $(basename "$0")
+Update project dependencies -- migrations, libraries, etc.
+"
+}
+
+if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+    if [ "${1:-}" = "--help" ]; then
+        usage
+    else
+        exit 1
+    fi
+fi
