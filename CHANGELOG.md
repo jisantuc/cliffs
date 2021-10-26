@@ -6,4 +6,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- Show help text on script name hover [#4](https://github.com/jisantuc/cliffs/pull/4)
+- Show help text on script name hover [#5](https://github.com/jisantuc/cliffs/pull/5)
