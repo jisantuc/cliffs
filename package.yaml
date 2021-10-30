@@ -26,7 +26,9 @@ ghc-options:
 dependencies:
   - base >= 4.7 && < 5
   - brick
+  - cmark-gfm
   - command
+  - containers
   - directory
   - filepath
   - microlens

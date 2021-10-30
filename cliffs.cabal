@@ -25,6 +25,7 @@ source-repository head
 library
   exposed-modules:
       Lib
+      ScriptMetadata
   other-modules:
       Paths_cliffs
   hs-source-dirs:
@@ -33,7 +34,9 @@ library
   build-depends:
       base >=4.7 && <5
     , brick
+    , cmark-gfm
     , command
+    , containers
     , directory
     , filepath
     , microlens
@@ -53,7 +56,9 @@ executable cliffs-exe
       base >=4.7 && <5
     , brick
     , cliffs
+    , cmark-gfm
     , command
+    , containers
     , directory
     , filepath
     , microlens
@@ -74,7 +79,9 @@ test-suite cliffs-test
       base >=4.7 && <5
     , brick
     , cliffs
+    , cmark-gfm
     , command
+    , containers
     , directory
     , filepath
     , microlens

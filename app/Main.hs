@@ -10,6 +10,7 @@ import Brick.AttrMap
   )
 import qualified Brick.Main as M
 import Control.Monad (void)
+import qualified Data.Map.Strict as M
 import Data.Text (pack)
 import qualified Graphics.Vty as V
 import Lib
@@ -19,6 +20,7 @@ import Lib
     drawUi,
     emphAttr,
   )
+import ScriptMetadata (findScriptDescriptions)
 import System.Directory (listDirectory)
 import System.FilePath (takeFileName)
 
@@ -36,9 +38,16 @@ app =
 
 main :: IO ()
 main = do
+  descMap <- findScriptDescriptions
   scriptFileNames <- listDirectory "./scripts"
-  let scripts =
+  let lookupDesc filePath =
+        foldr const "No description" $ descMap >>= \m -> M.lookup (pack $ takeFileName filePath) m
+      scripts =
         AppState
-          ((\n -> Script False (pack $ takeFileName n) "description goes here") <$> scriptFileNames)
+          ( ( \n ->
+                Script False (pack $ takeFileName n) (lookupDesc n)
+            )
+              <$> scriptFileNames
+          )
           Nothing
    in void $ M.defaultMain app scripts
