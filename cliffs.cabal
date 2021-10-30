@@ -45,7 +45,7 @@ library
     , vty
   default-language: Haskell2010
 
-executable cliffs-exe
+executable cliffs
   main-is: Main.hs
   other-modules:
       Paths_cliffs
