@@ -8,6 +8,8 @@ pkgs.haskellPackages.ghcWithPackages (ps: with ps; [
   containers
   directory
   filepath
+  hspec
+  hspec-discover
   microlens
   text
   vector

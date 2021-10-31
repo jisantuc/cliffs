@@ -71,6 +71,7 @@ test-suite cliffs-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      ScriptMetadataSpec
       Paths_cliffs
   hs-source-dirs:
       test
@@ -84,6 +85,8 @@ test-suite cliffs-test
     , containers
     , directory
     , filepath
+    , hspec
+    , hspec-discover
     , microlens
     , text
     , vector
