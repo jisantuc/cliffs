@@ -38,7 +38,7 @@ jobs:
       - uses: actions/cache@v2.1.3
         name: Cache ~/.cabal/store
         with:
-          path: ${{ steps.setup-haskell-cabal.outputs.cabal-store }}
+          path: /home/runner/.cabal/store
           key: ${{ runner.os }}-${{ hashFiles('cabal.project.freeze') }}
 
       - name: Install dependencies
