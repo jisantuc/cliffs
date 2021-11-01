@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module ScriptMetadata (findScriptDescriptions, readScriptDescriptions) where
+module ScriptMetadata (findScriptDescriptions, readScriptDescriptions, getContainedText) where
 
 import CMarkGFM (Node (Node), NodeType (CODE, LINK, TABLE, TABLE_ROW, TEXT), commonmarkToNode, extTable)
 -- import qualified Data.Map.Strict as M
@@ -9,6 +9,7 @@ import CMarkGFM (Node (Node), NodeType (CODE, LINK, TABLE, TABLE_ROW, TEXT), com
 import qualified Data.Map.Lazy as M
 import Data.Text (Text)
 import Data.Text.IO as T (readFile)
+import Debug.Trace
 
 findScriptDescriptions :: IO (Maybe (M.Map Text Text))
 findScriptDescriptions =
@@ -45,10 +46,13 @@ scriptNameColumnName :: Text
 scriptNameColumnName = "Script Name"
 
 getContainedText :: Node -> Maybe Text
+getContainedText (Node _ (TEXT t) _) = Just t
+getContainedText (Node _ (CODE t) _) = Just t
 getContainedText (Node _ _ (Node _ (TEXT t) _ : _)) = Just t
 getContainedText (Node _ _ (Node _ (CODE t) _ : _)) = Just t
 getContainedText (Node _ _ (Node _ (LINK _ _) (linkText : _) : _)) =
-  getContainedText linkText
+  trace ("LINK TEXT: " <> show linkText) $
+    getContainedText linkText
 getContainedText _ = Nothing
 
 checkTableHeader :: Node -> Bool
