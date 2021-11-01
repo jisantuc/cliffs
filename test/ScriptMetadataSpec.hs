@@ -19,6 +19,10 @@ spec = do
       tableTest tableWithCodeName (M.singleton "apple" "banana")
     it "extracts keys from code in links" $
       tableTest tableWithCodeLinkName (M.singleton "car" "truck")
+    it "doesn't extract anything from tables with unexpected column headings" $
+      (readScriptDescriptions . commonmarkToNode [] [extTable] $ badHeadingsText) `shouldBe` Nothing
+    it "ignores bad rows but collects good ones" $
+      tableTest tableWithABadRow (M.fromList [("foo", "bar"), ("car", "truck")])
   describe "Text extractions" $ do
     it "extracts text from plain text" $
       textTest plainText "foo"
@@ -61,3 +65,9 @@ linkText = "[baz](./scripts/baz)"
 
 linkCodeText :: Text
 linkCodeText = "[`qux`](./scripts/qux)"
+
+badHeadingsText :: Text
+badHeadingsText = "| no good | bogus |\n| :----- | ----- |\n| foo | bar |"
+
+tableWithABadRow :: Text
+tableWithABadRow = "| Script Name | Description |\n| :---------- | ----------- |\n| truck |\n| foo  | bar |\n| [`car`](./scripts/car)  | truck |\n"
