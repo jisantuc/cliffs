@@ -2,26 +2,41 @@
 
 module ScriptMetadataSpec where
 
-import CMarkGFM (commonmarkToNode, extTable)
+import CMarkGFM (Node (Node), NodeType (DOCUMENT), commonmarkToNode, extTable)
 import qualified Data.Map.Strict as M
 import Data.Text (Text)
-import ScriptMetadata (readScriptDescriptions)
+import ScriptMetadata (getContainedText, readScriptDescriptions)
 import Test.Hspec (Expectation, Spec, describe, it, shouldBe)
 
 spec :: Spec
-spec = describe "Text extractions" $ do
-  it "extracts keys from plain text" $
-    tableTest tableWithPlainTextName (M.singleton "foo" "bar")
-  it "extracts keys from links" $
-    tableTest tableWithLinkName (M.singleton "red" "green")
-  it "extracts keys from code" $
-    tableTest tableWithCodeName (M.singleton "apple" "banana")
-  it "extracts keys from code in links" $
-    tableTest tableWithCodeLinkName (M.singleton "car" "truck")
+spec = do
+  describe "Table key extractions" $ do
+    it "extracts keys from plain text" $
+      tableTest tableWithPlainTextName (M.singleton "foo" "bar")
+    it "extracts keys from links" $
+      tableTest tableWithLinkName (M.singleton "red" "green")
+    it "extracts keys from code" $
+      tableTest tableWithCodeName (M.singleton "apple" "banana")
+    it "extracts keys from code in links" $
+      tableTest tableWithCodeLinkName (M.singleton "car" "truck")
+  describe "Text extractions" $ do
+    it "extracts text from plain text" $
+      textTest plainText "foo"
+    it "extracts text from code" $
+      textTest codeText "bar"
+    it "extracts text from links" $
+      textTest linkText "baz"
+    it "extracts text from code in a link" $
+      textTest linkCodeText "qux"
 
 tableTest :: Text -> M.Map Text Text -> Expectation
 tableTest t m =
   (readScriptDescriptions . commonmarkToNode [] [extTable] $ t) `shouldBe` (Just m)
+
+textTest :: Text -> Text -> Expectation
+textTest markdownText expectedText =
+  let (Node _ DOCUMENT (firstChild : _)) = commonmarkToNode [] [extTable] markdownText
+   in getContainedText firstChild `shouldBe` (Just expectedText)
 
 tableWithPlainTextName :: Text
 tableWithPlainTextName = "| Script Name | Description |\n| :---------- | ----------- |\n| foo  | bar |\n"
@@ -34,3 +49,15 @@ tableWithCodeName = "| Script Name | Description |\n| :---------- | ----------- 
 
 tableWithCodeLinkName :: Text
 tableWithCodeLinkName = "| Script Name | Description |\n| :---------- | ----------- |\n| [`car`](./scripts/car)  | truck |\n"
+
+plainText :: Text
+plainText = "foo"
+
+codeText :: Text
+codeText = "`bar`"
+
+linkText :: Text
+linkText = "[baz](./scripts/baz)"
+
+linkCodeText :: Text
+linkCodeText = "[`qux`](./scripts/qux)"
