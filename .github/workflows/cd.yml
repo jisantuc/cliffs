@@ -3,8 +3,6 @@ name: CD
 on:
   pull_request:
   push:
-    branches:
-      - feature/js/make-a-real-nix-pkg
     tags:
       - v*
 
