@@ -3,6 +3,8 @@ name: CD
 on:
   pull_request:
   push:
+    branches:
+      - feature/js/make-a-real-nix-pkg
     tags:
       - v*
 
@@ -23,10 +25,16 @@ jobs:
           nix_path: nixpkgs=channel:nixos-unstable
 
       - name: Install package
-        id: package-installation
-        run: nix-env -i -f default.nix && echo "::set-output name=BINARY_PATH::$(which cliffs)"
+        run: nix-env -i -f default.nix
+
+      - name: Locate package binary
+        id: package-location
+        run: echo "::set-output name=BINARY_PATH::$(which cliffs)"
+
+      - name: Echo binary location
+        run: echo ${{ steps.package-location.outputs.BINARY_PATH }}
 
       - name: Create release
         uses: softprops/action-gh-release@v1
         with:
-          files: ${{ steps.package-installation.outputs.BINARY_PATH }}
+          files: ${{ steps.package-location.outputs.BINARY_PATH }}
