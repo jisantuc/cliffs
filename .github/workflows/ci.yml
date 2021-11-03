@@ -27,33 +27,8 @@ jobs:
           # If you chose API tokens for write access OR if you have a private cache
           authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
 
-      - name: Configure
-        run: |
-          nix-shell --run 'cabal configure --enable-tests --enable-benchmarks --test-show-details=direct'
-
-      - name: Freeze
-        run: |
-          nix-shell --run "cabal freeze"
-
-      - name: Push nix-shell binaries to cachix
-        run: |
-          nix-store --query --references $(nix-instantiate shell.nix) | xargs nix-store --realise | xargs nix-store --query --requisites | cachix push jisantuc
-        env:
-          CACHIX_AUTH_TOKEN: "${{ secrets.CACHIX_AUTH_TOKEN }}"
-
-      - uses: actions/cache@v2.1.3
-        name: Cache ~/.cabal/store
-        with:
-          path: /home/runner/.cabal/store
-          key: ${{ runner.os }}-${{ hashFiles('cabal.project.freeze') }}
-
-      - name: Install dependencies
-        run: |
-          nix-shell --run 'cabal build all --only-dependencies'
-
-      - name: Build
-        run: |
-          nix-shell --run 'cabal build all'
+      - name: Build package
+        run: nix-build
 
       - name: Test
         run: |
