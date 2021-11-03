@@ -1,13 +1,2 @@
-with import <nixpkgs> { };
-
-{ pkgs ? import <nixpkgs> { } }:
-let
-  haskellWithPackages = import ./haskell.nix;
-in
-pkgs.mkShell {
-  name = "cliffs";
-  buildInputs = [
-    haskellWithPackages
-    cabal-install
-  ];
-}
+{ nixpkgs ? import <nixpkgs> { }, compiler ? "ghc8107" }:
+(import ./default.nix { inherit nixpkgs compiler; }).env
