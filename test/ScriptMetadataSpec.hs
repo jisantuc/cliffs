@@ -14,7 +14,7 @@ spec = do
     it "extracts keys from plain text" $
       tableTest tableWithPlainTextName (M.singleton "foo" "bar")
     it "extracts keys from links" $
-      tableTest tableWithLinkName (M.singleton "red" "GREEN")
+      tableTest tableWithLinkName (M.singleton "red" "green")
     it "extracts keys from code" $
       tableTest tableWithCodeName (M.singleton "apple" "banana")
     it "extracts keys from code in links" $

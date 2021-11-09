@@ -28,7 +28,3 @@ jobs:
 
       - name: Build package
         run: nix-build
-
-      - name: Test
-        run: |
-          nix-shell --run 'cabal test all --enable-coverage'
