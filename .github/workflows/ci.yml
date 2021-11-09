@@ -21,9 +21,10 @@ jobs:
           nix_path: nixpkgs=channel:nixos-21.05
       
       - name: Use cachix
-        run: cachix use jisantuc
-        env:
-          CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
+        uses: cachix/cachix-action@v10
+        with:
+          name: jisantuc
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - name: Build package
         run: nix-build
