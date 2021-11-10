@@ -36,6 +36,9 @@ jobs:
       - name: Echo binary location
         run: echo ${{ steps.package-location.outputs.BINARY_PATH }}
 
+      - name: Read binary location link
+        run: readlink -f ${{ steps.package-location.outputs.BINARY_PATH }}
+
       - name: Create release
         uses: softprops/action-gh-release@v1
         with:
