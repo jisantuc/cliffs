@@ -33,10 +33,10 @@ jobs:
         id: package-location
         run: echo "::set-output name=BINARY_PATH::$(nix-store -r $(which cliffs))"
 
-      - name: Echo binary location
-        run: echo ${{ steps.package-location.outputs.BINARY_PATH }}
+      - name: Copy binary to os-namespaced file
+        run: cp ${{ steps.package-location.outputs.BINARY_PATH }}/bin/cliffs $(pwd)/cliffs-${{ matrix.os }}
 
       - name: Create release
         uses: softprops/action-gh-release@v1
         with:
-          files: ${{ steps.package-location.outputs.BINARY_PATH }}/bin/cliffs
+          files: $(pwd)/cliffs-${{ matrix.os }}
