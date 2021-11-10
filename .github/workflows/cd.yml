@@ -32,15 +32,12 @@ jobs:
 
       - name: Locate package binary
         id: package-location
-        run: echo "::set-output name=BINARY_PATH::$(which cliffs)"
+        run: echo "::set-output name=BINARY_PATH::nix-store -r $(which cliffs)"
 
       - name: Echo binary location
         run: echo ${{ steps.package-location.outputs.BINARY_PATH }}
 
-      - name: Read binary location link
-        run: readlink -f ${{ steps.package-location.outputs.BINARY_PATH }}
-
       - name: Create release
         uses: softprops/action-gh-release@v1
         with:
-          files: ${{ steps.package-location.outputs.BINARY_PATH }}
+          files: ${{ steps.package-location.outputs.BINARY_PATH }}/bin/cliffs
