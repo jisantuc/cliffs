@@ -1,6 +1,7 @@
 { mkDerivation
 , base
 , brick
+, cabal-install
 , cmark-gfm
 , command
 , containers
@@ -34,7 +35,7 @@ mkDerivation {
     vector
     vty
   ];
-  libraryToolDepends = [ hpack ];
+  libraryToolDepends = [ hpack cabal-install ];
   executableHaskellDepends = [
     base
     brick
