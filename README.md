@@ -52,6 +52,7 @@ An example table is below:
 Relases are handled by [`chan`] and GitHub Actions. To create a new release:
 
 - rotate the changelog: `chan release v<VERSION>`
+- bump versions in `package.yaml` and `cliffs.cabal` (the second with `hpack`)
 - commit the release: `git commit -am "Update changelog for <VERSION>`
 - tag the release: `git tag -S -a v<VERSION> -m "Release v<VERSION>"`
 - push the tag: `git push origin --tags v<VERSION>`
