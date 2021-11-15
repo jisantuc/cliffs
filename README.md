@@ -46,5 +46,6 @@ An example table is below:
 | update      | Update dependencies and containers |
 
 
-[`brick`]: https://github.com/jtdaugherty/brick [scripts to rule them all]:
+[`brick`]: https://github.com/jtdaugherty/brick
+[scripts to rule them all]:
 https://github.com/github/scripts-to-rule-them-all
