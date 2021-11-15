@@ -23,8 +23,8 @@ function checkVersion() {
     echo "$1" | grep "v[0-9]\+\.[0-9]\+\.[0-9]\+"
 }
 
-function chan() {
-    docker run -e GITHUB_TOKEN="${GITHUB_TOKEN}" -v "$(pwd)":/opt/src jisantuc/chan:latest --allow-prerelease "$@"
+function chanRelease() {
+    docker run -e GITHUB_TOKEN="${GITHUB_TOKEN}" -v "$(pwd)":/opt/src jisantuc/chan:latest release --allow-prerelease "$@"
 }
 
 function release() {
@@ -42,7 +42,7 @@ function release() {
     # on any other errors
     set -e
 
-    chan release "$version"
+    chanRelease "$version"
 
     git add CHANGELOG.md
 
