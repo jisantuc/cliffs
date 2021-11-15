@@ -39,11 +39,13 @@ location, but for now the requirements are strict.
 
 An example table is below:
 
-| Script Name | Description                        |
-| :---------- | ---------------------------------- |
-| bootstrap   | Set stuff up                       |
-| server      | Start servers                      |
-| update      | Update dependencies and containers |
+| Script Name | Description                                         |
+| :---------- | --------------------------------------------------- |
+| release     | Create tags and CHANGELOG entries for a new release |
+| bootstrap   | Set stuff up                                        |
+| server      | Start servers                                       |
+| update      | Update dependencies and containers                  |
+
 
 ## Releases
 
@@ -55,6 +57,7 @@ Relases are handled by [`chan`] and [GitHub Actions]. To create a new release:
 - push the tag: `git push origin --tags v<VERSION>`
 - create the GitHub release after the build completes
 
+Everything up to creating the GitHub release after the build is handled by the `scripts/release` script.
 
 [`brick`]: https://github.com/jtdaugherty/brick
 [scripts to rule them all]:
