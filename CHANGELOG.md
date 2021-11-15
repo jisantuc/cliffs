@@ -8,7 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Show help text on script name hover [#5](https://github.com/jisantuc/cliffs/pull/5)
 - Created CI workflow and tested parsing a few known inputs [#9](https://github.com/jisantuc/cliffs/pull/9)
+- Determined and documented a release process and better ideas about binaries [#15](https://github.com/jisantuc/cliffs/pull/15)
 
 ### Changed
 - Nix expressions evaluate to a real derivation and a shell [#11](https://github.com/jisantuc/cliffs/pull/11)
 - Determined non-link binary path using nix-store [#14](https://github.com/jisantuc/cliffs/pull/14)
+
+[Unreleased]: https://github.com/jisantuc/cliffs/compare/v1.0.0-alpha...HEAD

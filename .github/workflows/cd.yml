@@ -20,23 +20,5 @@ jobs:
         with:
           nix_path: nixpkgs=channel:nixos-unstable
 
-      - name: Use cachix
-        uses: cachix/cachix-action@v10
-        with:
-          name: jisantuc
-          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
-
-      - name: Install package
-        run: nix-env -i -f default.nix
-
-      - name: Locate package binary
-        id: package-location
-        run: echo "::set-output name=BINARY_PATH::$(nix-store -r $(which cliffs))"
-
-      - name: Copy binary to os-namespaced file
-        run: cp ${{ steps.package-location.outputs.BINARY_PATH }}/bin/cliffs ./cliffs-${{ matrix.os }}
-
       - name: Create release
         uses: softprops/action-gh-release@v1
-        with:
-          files: ./cliffs-${{ matrix.os }}

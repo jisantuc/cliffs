@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+
+set -u
+
+function usage() {
+    echo -n \
+        "Usage: $(basename "$0")
+Create a release by:
+
+- rotating the changelog
+- creating a tag for the release
+- creating a GitHub release for the tag
+- pushing the tag and changes to GitHub
+"
+}
+
+function failVersion() {
+    echo "Version $1 is not a valid semver like v1.0.0"
+    exit 1
+}
+
+function checkVersion() {
+    echo "$1" | grep "v[0-9]\+\.[0-9]\+\.[0-9]\+"
+}
+
+function chanRelease() {
+    docker run -e GITHUB_TOKEN="${GITHUB_TOKEN}" -v "$(pwd)":/opt/src jisantuc/chan:latest release --allow-prerelease "$@"
+}
+
+function release() {
+
+    version=$1
+
+    checkVersion "$version"
+    versionCheck=$?
+
+    if [[ versionCheck -eq 1 ]]; then
+        failVersion "$version"
+    fi
+
+    # After we know that the version is valid, we want to fail
+    # on any other errors
+    set -e
+
+    chanRelease "$version"
+
+    versionNoV=$(echo "$version" | sed 's/v\(.*\)/\1/')
+
+    sed -i "s/^version:\( \+\)\([0-9]\+\.[0-9]\+\.[0-9]\+\)/version:\1$versionNoV/" package.yaml
+
+    nix-shell --run hpack
+
+    git add CHANGELOG.md package.yaml cliffs.cabal
+
+    git commit -m "Release version $version"
+
+    git push origin "$(git branch --show-current)"
+
+    git tag -s -a "$version" -m "Release $version"
+
+    git push origin --tags "$version"
+}
+
+if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+    if [ "${1:-}" = "--help" ]; then
+        usage
+    else
+        release "${1}"
+    fi
+fi

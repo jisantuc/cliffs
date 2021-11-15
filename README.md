@@ -39,12 +39,38 @@ location, but for now the requirements are strict.
 
 An example table is below:
 
-| Script Name | Description                        |
-| :---------- | ---------------------------------- |
-| bootstrap   | Set stuff up                       |
-| server      | Start servers                      |
-| update      | Update dependencies and containers |
+| Script Name | Description                                         |
+| :---------- | --------------------------------------------------- |
+| release     | Create tags and CHANGELOG entries for a new release |
+| bootstrap   | Set stuff up                                        |
+| server      | Start servers                                       |
+| update      | Update dependencies and containers                  |
 
 
-[`brick`]: https://github.com/jtdaugherty/brick [scripts to rule them all]:
+## Releases
+
+Relases are handled by [`chan`] and GitHub Actions. To create a new release:
+
+- rotate the changelog: `chan release v<VERSION>`
+- bump versions in `package.yaml` and `cliffs.cabal` (the second with `hpack`)
+- commit the release: `git commit -am "Update changelog for <VERSION>`
+- tag the release: `git tag -S -a v<VERSION> -m "Release v<VERSION>"`
+- push the tag: `git push origin --tags v<VERSION>`
+- create the GitHub release after the build completes
+
+Everything up to creating the GitHub release after the build is handled by the
+`scripts/release` script. The GitHub action will create the release itself.
+
+After the release exists, you should:
+
+- paste the changelog for this release
+- add an installation command like: `nix-env -i -f
+  https://github.com/jisantuc/cliffs/archive/refs/tags/VERSION.zip`. This
+  command will work across platforms where `nix` is installed, so MacOS / Linux
+  / NixOS / anyone else with nix should be able to call the install command and
+  get a working executable.
+
+[`brick`]: https://github.com/jtdaugherty/brick
+[scripts to rule them all]:
 https://github.com/github/scripts-to-rule-them-all
+[`chan`]: https://www.npmjs.com/package/@geut/chan
