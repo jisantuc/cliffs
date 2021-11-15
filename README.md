@@ -49,7 +49,7 @@ An example table is below:
 
 ## Releases
 
-Relases are handled by [`chan`] and [GitHub Actions]. To create a new release:
+Relases are handled by [`chan`] and GitHub Actions. To create a new release:
 
 - rotate the changelog: `chan release v<VERSION>`
 - commit the release: `git commit -am "Update changelog for <VERSION>`
@@ -58,9 +58,18 @@ Relases are handled by [`chan`] and [GitHub Actions]. To create a new release:
 - create the GitHub release after the build completes
 
 Everything up to creating the GitHub release after the build is handled by the
-`scripts/release` script. The GitHub actions that create the artifacts will
-create the release itself, but it's up to you to fill in the CHANGELOG.
+`scripts/release` script. The GitHub action will create the release itself.
+
+After the release exists, you should:
+
+- paste the changelog for this release
+- add an installation command like: `nix-env -i -f
+  https://github.com/jisantuc/cliffs/archive/refs/tags/VERSION.zip`. This
+  command will work across platforms where `nix` is installed, so MacOS / Linux
+  / NixOS / anyone else with nix should be able to call the install command and
+  get a working executable.
 
 [`brick`]: https://github.com/jtdaugherty/brick
 [scripts to rule them all]:
 https://github.com/github/scripts-to-rule-them-all
+[`chan`]: https://www.npmjs.com/package/@geut/chan
