@@ -45,6 +45,16 @@ An example table is below:
 | server      | Start servers                      |
 | update      | Update dependencies and containers |
 
+## Releases
+
+Relases are handled by [`chan`] and [GitHub Actions]. To create a new release:
+
+- rotate the changelog: `chan release v<VERSION>`
+- commit the release: `git commit -am "Update changelog for <VERSION>`
+- tag the release: `git tag -S -a v<VERSION> -m "Release v<VERSION>"`
+- push the tag: `git push origin --tags v<VERSION>`
+- create the GitHub release after the build completes
+
 
 [`brick`]: https://github.com/jtdaugherty/brick
 [scripts to rule them all]:
