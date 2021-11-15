@@ -8,6 +8,7 @@ import CMarkGFM (Node (Node), NodeType (CODE, LINK, TABLE, TABLE_ROW, TEXT), com
 
 import qualified Data.Map.Lazy as M
 import Data.Text (Text)
+import qualified Data.Text as T
 import Data.Text.IO as T (readFile)
 
 findScriptDescriptions :: IO (Maybe (M.Map Text Text))
@@ -44,11 +45,26 @@ descriptionColumnName = "Description"
 scriptNameColumnName :: Text
 scriptNameColumnName = "Script Name"
 
+joinMaybeTexts :: [Maybe Text] -> Text
+joinMaybeTexts [] = mempty
+joinMaybeTexts extractions =
+  T.unwords $
+    foldr
+      ( \x acc -> case x of
+          Nothing -> acc
+          Just " " -> acc
+          Just t ->
+            if T.length t == 0 then acc else t : acc
+      )
+      []
+      extractions
+
 getContainedText :: Node -> Maybe Text
-getContainedText (Node _ (TEXT t) _) = Just t
-getContainedText (Node _ (CODE t) _) = Just t
-getContainedText (Node _ _ (Node _ (TEXT t) _ : _)) = Just t
-getContainedText (Node _ _ (Node _ (CODE t) _ : _)) = Just t
+getContainedText (Node _ (TEXT t) _) = Just . T.strip $ t
+getContainedText (Node _ (CODE t) _) = Just . T.strip $ t
+getContainedText (Node _ (LINK _ _) (linkText : _)) = getContainedText linkText
+getContainedText (Node _ _ (Node _ (TEXT t) _ : siblings)) = Just . joinMaybeTexts $ (Just . T.strip $ t) : (getContainedText <$> siblings)
+getContainedText (Node _ _ (Node _ (CODE t) _ : siblings)) = Just . joinMaybeTexts $ (Just . T.strip $ t) : (getContainedText <$> siblings)
 getContainedText (Node _ _ (Node _ (LINK _ _) (linkText : _) : _)) =
   getContainedText linkText
 getContainedText _ = Nothing
