@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.0.1] - 2021-11-15
 ### Added
 - Show help text on script name hover [#5](https://github.com/jisantuc/cliffs/pull/5)
 - Created CI workflow and tested parsing a few known inputs [#9](https://github.com/jisantuc/cliffs/pull/9)
@@ -14,4 +16,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Nix expressions evaluate to a real derivation and a shell [#11](https://github.com/jisantuc/cliffs/pull/11)
 - Determined non-link binary path using nix-store [#14](https://github.com/jisantuc/cliffs/pull/14)
 
-[Unreleased]: https://github.com/jisantuc/cliffs/compare/v1.0.0-alpha...HEAD
+[Unreleased]: https://github.com/jisantuc/cliffs/compare/v0.0.1...HEAD
+[0.0.1]: https://github.com/jisantuc/cliffs/releases/tags/v0.0.1
