@@ -63,8 +63,10 @@ getContainedText :: Node -> Maybe Text
 getContainedText (Node _ (TEXT t) _) = Just . T.strip $ t
 getContainedText (Node _ (CODE t) _) = Just . T.strip $ t
 getContainedText (Node _ (LINK _ _) (linkText : _)) = getContainedText linkText
-getContainedText (Node _ _ (Node _ (TEXT t) _ : siblings)) = Just . joinMaybeTexts $ (Just . T.strip $ t) : (getContainedText <$> siblings)
-getContainedText (Node _ _ (Node _ (CODE t) _ : siblings)) = Just . joinMaybeTexts $ (Just . T.strip $ t) : (getContainedText <$> siblings)
+getContainedText (Node _ _ (Node _ (TEXT t) _ : siblings)) =
+  Just . joinMaybeTexts $ (Just . T.strip $ t) : (getContainedText <$> siblings)
+getContainedText (Node _ _ (Node _ (CODE t) _ : siblings)) =
+  Just . joinMaybeTexts $ (Just . T.strip $ t) : (getContainedText <$> siblings)
 getContainedText (Node _ _ (Node _ (LINK _ _) (linkText : _) : _)) =
   getContainedText linkText
 getContainedText _ = Nothing
