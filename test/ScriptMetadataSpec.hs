@@ -32,6 +32,16 @@ spec = do
       textTest linkText "baz"
     it "extracts text from code in a link" $
       textTest linkCodeText "qux"
+    it "extracts text from mixed plain and code text" $
+      textTest plainAndCode "foo bar"
+    it "extracts text from mixed plain and link text" $
+      textTest plainAndLink "foo bar"
+    it "extracts text from mixed code and link text" $
+      textTest codeAndLink "foo bar"
+    it "extracts text from mixed code and code link text" $
+      textTest codeAndCodeLink "foo bar"
+    it "extracts text from mixed plain and link and code text" $
+      textTest plainAndLinkAndCode "foo bar baz"
 
 tableTest :: Text -> M.Map Text Text -> Expectation
 tableTest t m =
@@ -53,6 +63,21 @@ tableWithCodeName = "| Script Name | Description |\n| :---------- | ----------- 
 
 tableWithCodeLinkName :: Text
 tableWithCodeLinkName = "| Script Name | Description |\n| :---------- | ----------- |\n| [`car`](./scripts/car)  | truck |\n"
+
+plainAndCode :: Text
+plainAndCode = "foo `bar`"
+
+plainAndLink :: Text
+plainAndLink = "foo [bar](./bar.txt)"
+
+codeAndLink :: Text
+codeAndLink = "`foo` [bar](./bar.txt)"
+
+codeAndCodeLink :: Text
+codeAndCodeLink = "`foo` [`bar`](./bar.txt)"
+
+plainAndLinkAndCode :: Text
+plainAndLinkAndCode = "foo [`bar`](./bar.txt) `baz`"
 
 plainText :: Text
 plainText = "foo"
