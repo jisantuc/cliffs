@@ -57,7 +57,9 @@ Relases are handled by [`chan`] and [GitHub Actions]. To create a new release:
 - push the tag: `git push origin --tags v<VERSION>`
 - create the GitHub release after the build completes
 
-Everything up to creating the GitHub release after the build is handled by the `scripts/release` script.
+Everything up to creating the GitHub release after the build is handled by the
+`scripts/release` script. The GitHub actions that create the artifacts will
+create the release itself, but it's up to you to fill in the CHANGELOG.
 
 [`brick`]: https://github.com/jtdaugherty/brick
 [scripts to rule them all]:
