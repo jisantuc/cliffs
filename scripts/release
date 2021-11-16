@@ -48,9 +48,11 @@ function release() {
 
     sed -i "s/^version:\( \+\)\([0-9]\+\.[0-9]\+\.[0-9]\+\)/version:\1$versionNoV/" package.yaml
 
+    sed -i "s/^\( \+\)version = \"[0-9]\+\.[0-9]\+\.[0-9]\+\"/\1version = \"$versionNoV\"/" cliffs.nix
+
     nix-shell --run hpack
 
-    git add CHANGELOG.md package.yaml cliffs.cabal
+    git add CHANGELOG.md package.yaml cliffs.cabal cliffs.nix
 
     git commit -m "Release version $version"
 
