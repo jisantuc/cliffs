@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Mixed format text no longer parses as the first element [#17](https://github.com/jisantuc/cliffs/pull/17)
 - Release script also bumps version of nix derivation [#19](https://github.com/jisantuc/cliffs/pull/19)
+- Removed cabal from default build [#20](https://github.com/jisantuc/cliffs/pull/20)
 
 ## [0.0.1] - 2021-11-15
 ### Added
