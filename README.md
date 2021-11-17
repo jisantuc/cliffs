@@ -33,9 +33,7 @@ such information in a table in a README. Your README must live in a file called
 `README.md`. `cliffs` will show the description from the table in the README for
 any scripts that have them. To detect the short descriptions automatically, your
 README _must_ have a table with two columns named "Script Name" and
-"Description" somewhere in the README. In the future this requirement may be
-relaxed, for example by taking arguments for the column headers and the README
-location, but for now the requirements are strict.
+"Description" somewhere in the README. 
 
 An example table is below:
 
@@ -46,6 +44,12 @@ An example table is below:
 | server      | Start servers                                       |
 | update      | Update dependencies and containers                  |
 
+If you have a similar table but with different names, you can specify those at
+runtime! You can use the `--script-name-column` / `-s` option to control
+the name of the column where script names can be found, and the
+`--description-column` / `-d` option to control the name of the column
+where the descriptions are found. Both have defaults in case your names
+match "Script Name" and "Description" already.
 
 ## Releases
 
