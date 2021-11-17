@@ -25,6 +25,7 @@ import Options.Applicative
     execParser,
     fullDesc,
     header,
+    help,
     helper,
     info,
     long,
@@ -47,8 +48,20 @@ data Options = Options
 options :: Parser Options
 options =
   Options
-    <$> strOption (long "script-name-column" <> short 's' <> showDefault <> value "Script Name")
-    <*> strOption (long "description-column" <> short 'd' <> showDefault <> value "Description")
+    <$> strOption
+      ( long "script-name-column"
+          <> short 's'
+          <> showDefault
+          <> value "Script Name"
+          <> help "Name of the README table column holding the name of scripts"
+      )
+    <*> strOption
+      ( long "description-column"
+          <> short 'd'
+          <> showDefault
+          <> value "Description"
+          <> help "Name of the README table column holding the descriptions of scripts"
+      )
 
 app :: M.App AppState (IO ()) ()
 app =
