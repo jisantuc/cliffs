@@ -14,6 +14,7 @@
 , text
 , vector
 , vty
+, extraToolDeps ? [ ]
 }:
 mkDerivation {
   pname = "cliffs";
@@ -34,7 +35,7 @@ mkDerivation {
     vector
     vty
   ];
-  libraryToolDepends = [ hpack ];
+  libraryToolDepends = [ hpack ] ++ extraToolDeps;
   executableHaskellDepends = [
     base
     brick
