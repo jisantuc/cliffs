@@ -1,7 +1,6 @@
 { mkDerivation
 , base
 , brick
-, cabal-install
 , cmark-gfm
 , command
 , containers
@@ -15,6 +14,7 @@
 , text
 , vector
 , vty
+, extraToolDeps ? [ ]
 }:
 mkDerivation {
   pname = "cliffs";
@@ -35,7 +35,7 @@ mkDerivation {
     vector
     vty
   ];
-  libraryToolDepends = [ hpack cabal-install ];
+  libraryToolDepends = [ hpack ] ++ extraToolDeps;
   executableHaskellDepends = [
     base
     brick

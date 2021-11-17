@@ -1,2 +1,5 @@
-{ nixpkgs ? import <nixpkgs> { }, compiler ? "ghc8107" }:
-nixpkgs.pkgs.haskell.packages.${compiler}.callPackage ./cliffs.nix { }
+{ nixpkgs ? import <nixpkgs> { }
+, compiler ? "ghc8107"
+, extraToolDeps ? [ ]
+}:
+nixpkgs.pkgs.haskell.packages.${compiler}.callPackage ./cliffs.nix { extraToolDeps = extraToolDeps; }
