@@ -40,6 +40,7 @@ library
     , directory
     , filepath
     , microlens
+    , optparse-applicative
     , text
     , vector
     , vty
@@ -62,6 +63,7 @@ executable cliffs
     , directory
     , filepath
     , microlens
+    , optparse-applicative
     , text
     , vector
     , vty
@@ -88,6 +90,7 @@ test-suite cliffs-test
     , hspec
     , hspec-discover
     , microlens
+    , optparse-applicative
     , text
     , vector
     , vty
