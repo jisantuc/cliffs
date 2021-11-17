@@ -20,7 +20,8 @@ spec = do
     it "extracts keys from code in links" $
       tableTest tableWithCodeLinkName (M.singleton "car" "truck")
     it "doesn't extract anything from tables with unexpected column headings" $
-      (readScriptDescriptions . commonmarkToNode [] [extTable] $ badHeadingsText) `shouldBe` Nothing
+      (readScriptDescriptions "Script Name" "Description" . commonmarkToNode [] [extTable] $ badHeadingsText)
+        `shouldBe` Nothing
     it "ignores bad rows but collects good ones" $
       tableTest tableWithABadRow (M.fromList [("foo", "bar"), ("car", "truck")])
   describe "Text extractions" $ do
@@ -45,7 +46,7 @@ spec = do
 
 tableTest :: Text -> M.Map Text Text -> Expectation
 tableTest t m =
-  (readScriptDescriptions . commonmarkToNode [] [extTable] $ t) `shouldBe` (Just m)
+  (readScriptDescriptions "Script Name" "Description" . commonmarkToNode [] [extTable] $ t) `shouldBe` (Just m)
 
 textTest :: Text -> Text -> Expectation
 textTest markdownText expectedText =
