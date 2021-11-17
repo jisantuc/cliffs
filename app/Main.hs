@@ -11,7 +11,7 @@ import Brick.AttrMap
 import qualified Brick.Main as M
 import Control.Monad (void)
 import qualified Data.Map.Strict as M
-import Data.Text (pack)
+import Data.Text (Text, pack)
 import qualified Graphics.Vty as V
 import Lib
   ( AppState (..),
@@ -20,9 +20,18 @@ import Lib
     drawUi,
     emphAttr,
   )
+import Options.Applicative (Parser)
 import ScriptMetadata (findScriptDescriptions)
 import System.Directory (listDirectory)
 import System.FilePath (takeFileName)
+
+data Options = Options
+  { nameColumnName :: Text,
+    descriptionColumnName :: Text
+  }
+
+options :: Parser Options
+options = undefined
 
 app :: M.App AppState (IO ()) ()
 app =
