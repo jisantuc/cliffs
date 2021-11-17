@@ -11,7 +11,7 @@ import Brick.AttrMap
 import qualified Brick.Main as M
 import Control.Monad (void)
 import qualified Data.Map.Strict as M
-import Data.Text (pack)
+import Data.Text (Text, pack)
 import qualified Graphics.Vty as V
 import Lib
   ( AppState (..),
@@ -20,9 +20,48 @@ import Lib
     drawUi,
     emphAttr,
   )
+import Options.Applicative
+  ( Parser,
+    execParser,
+    fullDesc,
+    header,
+    help,
+    helper,
+    info,
+    long,
+    progDesc,
+    short,
+    showDefault,
+    strOption,
+    value,
+    (<**>),
+  )
 import ScriptMetadata (findScriptDescriptions)
 import System.Directory (listDirectory)
 import System.FilePath (takeFileName)
+
+data Options = Options
+  { nameColumnName :: Text,
+    descriptionColumnName :: Text
+  }
+
+options :: Parser Options
+options =
+  Options
+    <$> strOption
+      ( long "script-name-column"
+          <> short 's'
+          <> showDefault
+          <> value "Script Name"
+          <> help "Name of the README table column holding the name of scripts"
+      )
+    <*> strOption
+      ( long "description-column"
+          <> short 'd'
+          <> showDefault
+          <> value "Description"
+          <> help "Name of the README table column holding the descriptions of scripts"
+      )
 
 app :: M.App AppState (IO ()) ()
 app =
@@ -36,9 +75,9 @@ app =
       M.appChooseCursor = M.neverShowCursor
     }
 
-main :: IO ()
-main = do
-  descMap <- findScriptDescriptions
+run :: Options -> IO ()
+run (Options {nameColumnName, descriptionColumnName}) = do
+  descMap <- findScriptDescriptions nameColumnName descriptionColumnName
   scriptFileNames <- listDirectory "./scripts"
   let lookupDesc filePath =
         foldr const "No description" $ descMap >>= \m -> M.lookup (pack $ takeFileName filePath) m
@@ -51,3 +90,14 @@ main = do
           )
           Nothing
    in void $ M.defaultMain app scripts
+
+main :: IO ()
+main = execParser opts >>= run
+  where
+    opts =
+      info
+        (options <**> helper)
+        ( fullDesc
+            <> progDesc "Launch an interactive terminal UI for inspecting scripts-to-rule-them-all"
+            <> header "cliffs"
+        )

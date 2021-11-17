@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Release script also bumps version of nix derivation [#19](https://github.com/jisantuc/cliffs/pull/19)
 - Removed cabal from default build [#20](https://github.com/jisantuc/cliffs/pull/20)
 
+### Added
+- Allowed configuration of column and description names [#22](https://github.com/jisantuc/cliffs/pull/22)
+
 ## [0.0.1] - 2021-11-15
 ### Added
 - Show help text on script name hover [#5](https://github.com/jisantuc/cliffs/pull/5)

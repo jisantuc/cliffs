@@ -11,6 +11,7 @@
 , hspec-discover
 , lib
 , microlens
+, optparse-applicative
 , text
 , vector
 , vty
@@ -31,6 +32,7 @@ mkDerivation {
     directory
     filepath
     microlens
+    optparse-applicative
     text
     vector
     vty

@@ -32,6 +32,7 @@ dependencies:
   - directory
   - filepath
   - microlens
+  - optparse-applicative
   - text
   - vector
   - vty
