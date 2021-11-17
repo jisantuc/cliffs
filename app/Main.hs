@@ -20,7 +20,21 @@ import Lib
     drawUi,
     emphAttr,
   )
-import Options.Applicative (Parser)
+import Options.Applicative
+  ( Parser,
+    execParser,
+    fullDesc,
+    header,
+    helper,
+    info,
+    long,
+    progDesc,
+    short,
+    showDefault,
+    strOption,
+    value,
+    (<**>),
+  )
 import ScriptMetadata (findScriptDescriptions)
 import System.Directory (listDirectory)
 import System.FilePath (takeFileName)
@@ -31,7 +45,10 @@ data Options = Options
   }
 
 options :: Parser Options
-options = undefined
+options =
+  Options
+    <$> strOption (long "script-name-column" <> short 's' <> showDefault <> value "Script Name")
+    <*> strOption (long "description-column" <> short 'd' <> showDefault <> value "Description")
 
 app :: M.App AppState (IO ()) ()
 app =
@@ -45,9 +62,9 @@ app =
       M.appChooseCursor = M.neverShowCursor
     }
 
-main :: IO ()
-main = do
-  descMap <- findScriptDescriptions
+run :: Options -> IO ()
+run (Options {nameColumnName, descriptionColumnName}) = do
+  descMap <- findScriptDescriptions nameColumnName descriptionColumnName
   scriptFileNames <- listDirectory "./scripts"
   let lookupDesc filePath =
         foldr const "No description" $ descMap >>= \m -> M.lookup (pack $ takeFileName filePath) m
@@ -60,3 +77,14 @@ main = do
           )
           Nothing
    in void $ M.defaultMain app scripts
+
+main :: IO ()
+main = execParser opts >>= run
+  where
+    opts =
+      info
+        (options <**> helper)
+        ( fullDesc
+            <> progDesc "Launch an interactive terminal UI for inspecting scripts-to-rule-them-all"
+            <> header "cliffs"
+        )

@@ -11,10 +11,12 @@ import Data.Text (Text)
 import qualified Data.Text as T
 import Data.Text.IO as T (readFile)
 
-findScriptDescriptions :: IO (Maybe (M.Map Text Text))
-findScriptDescriptions =
-  readScriptDescriptions . commonmarkToNode [] [extTable]
-    <$> T.readFile "README.md"
+findScriptDescriptions :: Text -> Text -> IO (Maybe (M.Map Text Text))
+findScriptDescriptions
+  scriptNameColumnName
+  scriptDescriptionColumnName =
+    readScriptDescriptions scriptNameColumnName scriptDescriptionColumnName . commonmarkToNode [] [extTable]
+      <$> T.readFile "README.md"
 
 rowToPair :: Node -> Maybe (M.Map Text Text)
 rowToPair (Node _ TABLE_ROW (c1 : c2 : _)) =
@@ -38,12 +40,6 @@ extractMap (Node _ (TABLE _) (_ : rows)) =
   -- our goals
   mconcat $ rowToPair <$> rows
 extractMap _ = Nothing
-
-descriptionColumnName :: Text
-descriptionColumnName = "Description"
-
-scriptNameColumnName :: Text
-scriptNameColumnName = "Script Name"
 
 joinMaybeTexts :: [Maybe Text] -> Text
 joinMaybeTexts [] = mempty
@@ -71,25 +67,39 @@ getContainedText (Node _ _ (Node _ (LINK _ _) (linkText : _) : _)) =
   getContainedText linkText
 getContainedText _ = Nothing
 
-checkTableHeader :: Node -> Bool
-checkTableHeader (Node _ TABLE_ROW (c1 : c2 : _)) =
-  getContainedText c1 == Just scriptNameColumnName
-    && getContainedText c2 == Just descriptionColumnName
-checkTableHeader _ = False
+checkTableHeader :: Text -> Text -> Node -> Bool
+checkTableHeader
+  scriptNameColumnName
+  scriptDescriptionColumnName
+  (Node _ TABLE_ROW (c1 : c2 : _)) =
+    getContainedText c1 == Just scriptNameColumnName
+      && getContainedText c2 == Just scriptDescriptionColumnName
+checkTableHeader _ _ _ = False
 
-checkTable :: Node -> Bool
-checkTable (Node _ (TABLE _) (hr : _)) = checkTableHeader hr
-checkTable _ = False
+checkTable :: Text -> Text -> Node -> Bool
+checkTable scriptNameColumnName scriptDescriptionColumnName (Node _ (TABLE _) (hr : _)) =
+  checkTableHeader scriptNameColumnName scriptDescriptionColumnName hr
+checkTable _ _ _ = False
 
-readScriptDescriptions :: Node -> Maybe (M.Map Text Text)
-readScriptDescriptions table@(Node _ (TABLE _) _) =
-  if checkTable table then extractMap table else Nothing
-readScriptDescriptions (Node _ _ []) =
+readScriptDescriptions :: Text -> Text -> Node -> Maybe (M.Map Text Text)
+readScriptDescriptions
+  scriptNameColumnName
+  scriptDescriptionColumnName
+  table@(Node _ (TABLE _) _) =
+    if checkTable scriptNameColumnName scriptDescriptionColumnName table
+      then extractMap table
+      else Nothing
+readScriptDescriptions _ _ (Node _ _ []) =
   Nothing
-readScriptDescriptions (Node _ _ (h : t)) =
-  go h t
-  where
-    go node [] = readScriptDescriptions node
-    go node (h' : t') = case readScriptDescriptions node of
-      descs@(Just _) -> descs
-      Nothing -> go h' t'
+readScriptDescriptions
+  scriptNameColumnName
+  scriptDescriptionColumnName
+  (Node _ _ (h : t)) =
+    go h t
+    where
+      go node [] =
+        readScriptDescriptions scriptNameColumnName scriptDescriptionColumnName node
+      go node (h' : t') =
+        case readScriptDescriptions scriptNameColumnName scriptDescriptionColumnName node of
+          descs@(Just _) -> descs
+          Nothing -> go h' t'
